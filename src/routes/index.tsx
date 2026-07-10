@@ -99,7 +99,7 @@ function MenuPage() {
           return (
             <section
               key={cat.id}
-              ref={(el) => { catRefs.current[cat.id] = el; }}
+              ref={(el) => { catRefs.current[cat.id] = el as HTMLDivElement | null; }}
               className="scroll-mt-40 mb-14"
               id={`cat-${cat.id}`}
             >
