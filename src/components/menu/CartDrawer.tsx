@@ -34,11 +34,17 @@ export function CartDrawer({ open, onClose }: Props) {
     linhas.push("");
     linhas.push("*Itens do pedido:*");
     items.forEach((it, idx) => {
-      linhas.push(`\n${idx + 1}. *${formatQty(it.qty, it.unit)} — ${it.name}*`);
+      if (it.unit === "kg") {
+        linhas.push(`\n${idx + 1}. *${it.name}*`);
+        linhas.push(`   • Preço: ${formatBRL(it.price)}/kg`);
+        linhas.push(`   • Peso a definir na retirada/entrega`);
+      } else {
+        linhas.push(`\n${idx + 1}. *${formatQty(it.qty, it.unit)} — ${it.name}*`);
+      }
       Object.entries(it.selections).forEach(([k, v]) => {
         if (v.length) linhas.push(`   • ${k}: ${v.join(", ")}`);
       });
-      linhas.push(`   Subtotal: ${formatBRL(calcItemTotal(it))}`);
+      if (it.unit !== "kg") linhas.push(`   Subtotal: ${formatBRL(calcItemTotal(it))}`);
     });
     linhas.push("");
     linhas.push(`*Total do pedido: ${formatBRL(subtotal)}*`);
