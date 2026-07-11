@@ -91,8 +91,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Crie um cardápio online profissional e personalizado para o Doce Sonho, com opções e preços idênticos ao PDF." },
       { property: "og:description", content: "Crie um cardápio online profissional e personalizado para o Doce Sonho, com opções e preços idênticos ao PDF." },
       { name: "twitter:description", content: "Crie um cardápio online profissional e personalizado para o Doce Sonho, com opções e preços idênticos ao PDF." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/kjZ0IWw9YpcmF5ihdASM5MDGBDO2/social-images/social-1783787025024-8715.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/kjZ0IWw9YpcmF5ihdASM5MDGBDO2/social-images/social-1783787025024-8715.webp" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/kjZ0IWw9YpcmF5ihdASM5MDGBDO2/social-images/social-1783788011251-8715.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/kjZ0IWw9YpcmF5ihdASM5MDGBDO2/social-images/social-1783788011251-8715.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
