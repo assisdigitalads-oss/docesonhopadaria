@@ -145,30 +145,41 @@ export function CartDrawer({ open, onClose }: Props) {
                   </button>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <button
-                      className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
-                      onClick={() =>
-                        updateQty(it.id, Math.max(it.minQty, +(it.qty - it.step).toFixed(2)))
-                      }
-                    >
-                      −
-                    </button>
-                    <span className="min-w-16 text-center font-semibold text-wine">
-                      {formatQty(it.qty, it.unit)}
+                {it.unit === "kg" ? (
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      Peso a definir na retirada/entrega
                     </span>
-                    <button
-                      className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
-                      onClick={() => updateQty(it.id, +(it.qty + it.step).toFixed(2))}
-                    >
-                      +
-                    </button>
+                    <span className="font-display text-lg text-wine">
+                      {formatBRL(it.price)}/kg
+                    </span>
                   </div>
-                  <span className="font-display text-lg text-wine">
-                    {formatBRL(calcItemTotal(it))}
-                  </span>
-                </div>
+                ) : (
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
+                        onClick={() =>
+                          updateQty(it.id, Math.max(it.minQty, +(it.qty - it.step).toFixed(2)))
+                        }
+                      >
+                        −
+                      </button>
+                      <span className="min-w-16 text-center font-semibold text-wine">
+                        {formatQty(it.qty, it.unit)}
+                      </span>
+                      <button
+                        className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
+                        onClick={() => updateQty(it.id, +(it.qty + it.step).toFixed(2))}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <span className="font-display text-lg text-wine">
+                      {formatBRL(calcItemTotal(it))}
+                    </span>
+                  </div>
+                )}
               </div>
             ))
           )}
