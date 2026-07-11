@@ -34,14 +34,23 @@ export function CartDrawer({ open, onClose }: Props) {
     linhas.push("");
     linhas.push("*Itens do pedido:*");
     items.forEach((it, idx) => {
-      linhas.push(`\n${idx + 1}. *${formatQty(it.qty, it.unit)} — ${it.name}*`);
+      if (it.unit === "kg") {
+        linhas.push(`\n${idx + 1}. *${it.name}*`);
+        linhas.push(`   • Preço: ${formatBRL(it.price)}/kg`);
+        linhas.push(`   • Peso a definir na retirada/entrega`);
+      } else {
+        linhas.push(`\n${idx + 1}. *${formatQty(it.qty, it.unit)} — ${it.name}*`);
+      }
       Object.entries(it.selections).forEach(([k, v]) => {
         if (v.length) linhas.push(`   • ${k}: ${v.join(", ")}`);
       });
-      linhas.push(`   Subtotal: ${formatBRL(calcItemTotal(it))}`);
+      if (it.unit !== "kg") linhas.push(`   Subtotal: ${formatBRL(calcItemTotal(it))}`);
     });
     linhas.push("");
-    linhas.push(`*Total do pedido: ${formatBRL(subtotal)}*`);
+    linhas.push(`*Total (itens por unidade): ${formatBRL(subtotal)}*`);
+    if (items.some((i) => i.unit === "kg")) {
+      linhas.push(`_Itens por kg: valor calculado no momento da retirada/entrega, conforme peso._`);
+    }
     if (obs.trim()) {
       linhas.push("");
       linhas.push(`*Observações:* ${obs.trim()}`);
@@ -136,30 +145,41 @@ export function CartDrawer({ open, onClose }: Props) {
                   </button>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <button
-                      className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
-                      onClick={() =>
-                        updateQty(it.id, Math.max(it.minQty, +(it.qty - it.step).toFixed(2)))
-                      }
-                    >
-                      −
-                    </button>
-                    <span className="min-w-16 text-center font-semibold text-wine">
-                      {formatQty(it.qty, it.unit)}
+                {it.unit === "kg" ? (
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      Peso a definir na retirada/entrega
                     </span>
-                    <button
-                      className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
-                      onClick={() => updateQty(it.id, +(it.qty + it.step).toFixed(2))}
-                    >
-                      +
-                    </button>
+                    <span className="font-display text-lg text-wine">
+                      {formatBRL(it.price)}/kg
+                    </span>
                   </div>
-                  <span className="font-display text-lg text-wine">
-                    {formatBRL(calcItemTotal(it))}
-                  </span>
-                </div>
+                ) : (
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
+                        onClick={() =>
+                          updateQty(it.id, Math.max(it.minQty, +(it.qty - it.step).toFixed(2)))
+                        }
+                      >
+                        −
+                      </button>
+                      <span className="min-w-16 text-center font-semibold text-wine">
+                        {formatQty(it.qty, it.unit)}
+                      </span>
+                      <button
+                        className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
+                        onClick={() => updateQty(it.id, +(it.qty + it.step).toFixed(2))}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <span className="font-display text-lg text-wine">
+                      {formatBRL(calcItemTotal(it))}
+                    </span>
+                  </div>
+                )}
               </div>
             ))
           )}
@@ -220,9 +240,14 @@ export function CartDrawer({ open, onClose }: Props) {
         {items.length > 0 && (
           <footer className="border-t border-border/60 px-5 py-4 bg-card/60 backdrop-blur space-y-3">
             <div className="flex items-baseline justify-between">
-              <span className="text-sm text-muted-foreground">Total</span>
+              <span className="text-sm text-muted-foreground">Total (itens por unidade)</span>
               <span className="font-display text-2xl text-wine">{formatBRL(subtotal)}</span>
             </div>
+            {items.some((i) => i.unit === "kg") && (
+              <p className="text-[11px] text-muted-foreground -mt-1">
+                Itens por kg: valor exato calculado na retirada/entrega, conforme peso.
+              </p>
+            )}
             {erro && (
               <p className="text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded px-2 py-1.5">
                 {erro}
