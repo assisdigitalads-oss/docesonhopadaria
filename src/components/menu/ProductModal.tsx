@@ -28,10 +28,9 @@ export function ProductModal({ product, onClose }: Props) {
       : product.price
     : 0;
 
-  const isKg = product?.unit === "kg";
   const total = useMemo(
-    () => (product ? (isKg ? 0 : unitPrice * qty) : 0),
-    [product, unitPrice, qty, isKg],
+    () => (product ? (product.unit === "kg" ? 0 : unitPrice * qty) : 0),
+    [product, unitPrice, qty],
   );
 
   if (!product) return null;
