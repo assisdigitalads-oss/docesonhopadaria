@@ -47,7 +47,10 @@ export function CartDrawer({ open, onClose }: Props) {
       if (it.unit !== "kg") linhas.push(`   Subtotal: ${formatBRL(calcItemTotal(it))}`);
     });
     linhas.push("");
-    linhas.push(`*Total do pedido: ${formatBRL(subtotal)}*`);
+    linhas.push(`*Total (itens por unidade): ${formatBRL(subtotal)}*`);
+    if (items.some((i) => i.unit === "kg")) {
+      linhas.push(`_Itens por kg: valor calculado no momento da retirada/entrega, conforme peso._`);
+    }
     if (obs.trim()) {
       linhas.push("");
       linhas.push(`*Observações:* ${obs.trim()}`);
