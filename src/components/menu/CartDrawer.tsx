@@ -240,9 +240,14 @@ export function CartDrawer({ open, onClose }: Props) {
         {items.length > 0 && (
           <footer className="border-t border-border/60 px-5 py-4 bg-card/60 backdrop-blur space-y-3">
             <div className="flex items-baseline justify-between">
-              <span className="text-sm text-muted-foreground">Total</span>
+              <span className="text-sm text-muted-foreground">Total (itens por unidade)</span>
               <span className="font-display text-2xl text-wine">{formatBRL(subtotal)}</span>
             </div>
+            {items.some((i) => i.unit === "kg") && (
+              <p className="text-[11px] text-muted-foreground -mt-1">
+                Itens por kg: valor exato calculado na retirada/entrega, conforme peso.
+              </p>
+            )}
             {erro && (
               <p className="text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded px-2 py-1.5">
                 {erro}
