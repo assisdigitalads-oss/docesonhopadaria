@@ -237,7 +237,9 @@ export function ProductModal({ product, onClose }: Props) {
             className="w-full h-13 rounded-xl bg-wine text-cream font-semibold shadow-soft hover:bg-wine-deep transition flex items-center justify-between px-5 py-3.5"
           >
             <span>Adicionar ao pedido</span>
-            <span className="font-display text-lg">{formatBRL(total)}</span>
+            <span className="font-display text-lg">
+              {isKg ? `${formatBRL(product.price)}/kg` : formatBRL(total)}
+            </span>
           </button>
         </div>
       </div>
