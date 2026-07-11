@@ -43,7 +43,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CartCtx>(() => {
     const subtotal = items.reduce(
-      (s, i) => s + (i.unit === "cento" ? (i.price / 100) * i.qty : i.price * i.qty),
+      (s, i) => s + (i.unit === "kg" ? 0 : i.unit === "cento" ? (i.price / 100) * i.qty : i.price * i.qty),
       0,
     );
     return {
@@ -73,6 +73,7 @@ export function useCart() {
 }
 
 export function calcItemTotal(item: CartItem) {
+  if (item.unit === "kg") return 0;
   return item.unit === "cento" ? (item.price / 100) * item.qty : item.price * item.qty;
 }
 
