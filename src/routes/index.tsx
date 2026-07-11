@@ -204,7 +204,7 @@ function Hero() {
           <span className="h-px w-8 bg-gold" /> Cardápio de Encomendas
         </p>
         <h1 className="font-display text-4xl sm:text-6xl leading-[1.05] max-w-3xl">
-          Feito à mão, com carinho de padaria de bairro.
+          Feito à mão, com a marca da qualidade que só a Doce Sonho tem.
         </h1>
         <p className="mt-4 max-w-xl text-cream/90 text-base sm:text-lg">
           Monte seu pedido de salgados, bolos, tortas, pizzas e doces — e envie direto pelo

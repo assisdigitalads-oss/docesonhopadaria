@@ -182,12 +182,18 @@ export function ProductModal({ product, onClose }: Props) {
               </button>
               <input
                 type="number"
-                value={qty}
+                value={Number.isFinite(qty) ? qty : ""}
                 min={product.minQty}
                 step={product.step}
+                inputMode={isKg ? "decimal" : "numeric"}
                 onChange={(e) => {
-                  const v = parseFloat(e.target.value);
-                  setQty(Number.isFinite(v) ? v : product.minQty);
+                  const raw = e.target.value;
+                  if (raw === "") { setQty(NaN as unknown as number); return; }
+                  const v = parseFloat(raw);
+                  setQty(Number.isFinite(v) ? v : (NaN as unknown as number));
+                }}
+                onBlur={() => {
+                  if (!Number.isFinite(qty) || qty < product.minQty) setQty(product.minQty);
                 }}
                 className="w-24 text-center h-11 rounded-lg border bg-background font-semibold text-wine"
               />
