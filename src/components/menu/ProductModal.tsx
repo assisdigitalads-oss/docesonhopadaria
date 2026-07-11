@@ -162,16 +162,21 @@ export function ProductModal({ product, onClose }: Props) {
             );
           })}
 
-          {/* Quantity */}
+          {/* Quantity — hidden for kg items (peso definido na retirada) */}
+          {isKg ? (
+            <div className="rounded-xl border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-wine">
+              <p className="font-semibold">Preço por kg: {formatBRL(product.price)}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                O peso final é definido na retirada ou entrega. O valor exato será
+                informado neste momento.
+              </p>
+            </div>
+          ) : (
           <div>
             <div className="flex items-baseline justify-between mb-2">
               <h4 className="font-semibold text-sm text-wine">Quantidade</h4>
               <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                {isCento
-                  ? `Mínimo ${product.minQty} un`
-                  : isKg
-                  ? `Mínimo ${product.minQty} kg`
-                  : `Mínimo ${product.minQty} un`}
+                {isCento ? `Mínimo ${product.minQty} un` : `Mínimo ${product.minQty} un`}
               </span>
             </div>
             <div className="flex items-center gap-3">
@@ -188,7 +193,7 @@ export function ProductModal({ product, onClose }: Props) {
                 value={Number.isFinite(qty) ? qty : ""}
                 min={product.minQty}
                 step={product.step}
-                inputMode={isKg ? "decimal" : "numeric"}
+                inputMode="numeric"
                 onChange={(e) => {
                   const raw = e.target.value;
                   if (raw === "") { setQty(NaN as unknown as number); return; }
@@ -208,9 +213,7 @@ export function ProductModal({ product, onClose }: Props) {
               >
                 +
               </button>
-              <span className="text-sm text-muted-foreground">
-                {isKg ? "kg" : "un"}
-              </span>
+              <span className="text-sm text-muted-foreground">un</span>
             </div>
             {isCento && (
               <p className="text-xs text-muted-foreground mt-2">
@@ -218,6 +221,7 @@ export function ProductModal({ product, onClose }: Props) {
               </p>
             )}
           </div>
+          )}
 
           {error && (
             <div className="text-sm text-destructive bg-destructive/10 border border-destructive/30 rounded-lg px-3 py-2">
