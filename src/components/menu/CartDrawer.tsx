@@ -89,6 +89,7 @@ export function CartDrawer({ open, onClose }: Props) {
       linhas.push(`• Chave Pix (${PIX_KEY_TYPE}): ${PIX_KEY}`);
       linhas.push(`• Beneficiário: ${PIX_BENEFICIARIO}`);
       linhas.push(`• Envie o comprovante nesta conversa após o pagamento 🙏`);
+    }
     if (obs.trim()) {
       linhas.push("");
       linhas.push(`*Observações:* ${obs.trim()}`);
