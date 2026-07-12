@@ -122,7 +122,7 @@ export function CartDrawer({ open, onClose }: Props) {
     return linhas.join("\n");
   };
 
-  const handleEnviar = () => {
+  const handleEnviar = async () => {
     setErro("");
     if (!items.length) { setErro("Seu carrinho está vazio."); return; }
     if (!nome.trim()) { setErro("Informe seu nome."); return; }
@@ -134,7 +134,38 @@ export function CartDrawer({ open, onClose }: Props) {
       setErro("Informe o endereço de entrega.");
       return;
     }
+    if (pagamento === "pix_agora" && !comprovante) {
+      setErro("Anexe o comprovante do Pix para comprovar o pagamento.");
+      return;
+    }
+
     const msg = buildMessage();
+
+    // Se tiver comprovante Pix, tenta compartilhar o arquivo + texto (mobile: WhatsApp aparece nas opções).
+    if (comprovante && typeof navigator !== "undefined" && (navigator as any).canShare) {
+      const files = [comprovante];
+      const shareData: ShareData = { files, text: msg, title: "Pedido Doce Sonho" };
+      if ((navigator as any).canShare({ files })) {
+        try {
+          await (navigator as any).share(shareData);
+          return;
+        } catch {
+          // usuário cancelou ou navegador recusou — cai no fallback abaixo
+        }
+      }
+    }
+
+    // Fallback: abre o WhatsApp com o texto e faz o download do comprovante
+    // para o cliente anexá-lo manualmente na conversa.
+    if (comprovante) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(comprovante);
+      a.download = comprovante.name || "comprovante-pix";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    }
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
   };
