@@ -248,7 +248,51 @@ export function CartDrawer({ open, onClose }: Props) {
                 </div>
               </div>
 
-              <FormField label="Nome" value={nome} onChange={setNome} placeholder="Seu nome" />
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-wine mb-2">
+                  Forma de pagamento
+                </label>
+                <div className="grid grid-cols-1 gap-2">
+                  {pagamentosDisponiveis.map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setPagamento(p)}
+                      className={[
+                        "rounded-xl border px-3 py-2.5 text-sm font-medium transition text-left",
+                        pagamento === p
+                          ? "bg-wine text-cream border-wine"
+                          : "bg-card border-border text-wine hover:border-wine/50",
+                      ].join(" ")}
+                    >
+                      {pagamentoLabel(p)}
+                    </button>
+                  ))}
+                </div>
+                {pagamento === "pix_agora" && (
+                  <div className="mt-3 rounded-xl border border-wine/30 bg-cream-deep/40 p-3 space-y-2">
+                    <p className="text-xs text-wine font-semibold uppercase tracking-wider">
+                      Pague via Pix ({PIX_KEY_TYPE})
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <code className="flex-1 text-sm bg-card border border-border rounded px-2 py-1.5 text-foreground select-all break-all">
+                        {PIX_KEY}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={copiarPix}
+                        className="rounded-lg bg-wine text-cream text-xs font-semibold px-3 py-2 hover:brightness-110 transition"
+                      >
+                        {pixCopiado ? "Copiado!" : "Copiar"}
+                      </button>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Beneficiário: <strong>{PIX_BENEFICIARIO}</strong>. Envie o comprovante pelo WhatsApp após finalizar o pedido.
+                    </p>
+                  </div>
+                )}
+              </div>
+
               <FormField
                 label="Telefone / WhatsApp"
                 value={telefone}
