@@ -83,6 +83,12 @@ export function CartDrawer({ open, onClose }: Props) {
     if (items.some((i) => i.unit === "kg")) {
       linhas.push(`_Itens por kg: valor calculado no momento da retirada/entrega, conforme peso._`);
     }
+    linhas.push("");
+    linhas.push(`*Forma de pagamento:* ${pagamentoLabel(pagamento)}`);
+    if (pagamento === "pix_agora") {
+      linhas.push(`• Chave Pix (${PIX_KEY_TYPE}): ${PIX_KEY}`);
+      linhas.push(`• Beneficiário: ${PIX_BENEFICIARIO}`);
+      linhas.push(`• Envie o comprovante nesta conversa após o pagamento 🙏`);
     if (obs.trim()) {
       linhas.push("");
       linhas.push(`*Observações:* ${obs.trim()}`);
