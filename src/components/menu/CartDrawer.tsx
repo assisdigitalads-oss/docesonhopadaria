@@ -28,6 +28,21 @@ export function CartDrawer({ open, onClose }: Props) {
   const [obs, setObs] = useState("");
   const [erro, setErro] = useState("");
   const [pixCopiado, setPixCopiado] = useState(false);
+  const [comprovante, setComprovante] = useState<File | null>(null);
+  const [comprovantePreview, setComprovantePreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!comprovante) { setComprovantePreview(null); return; }
+    if (!comprovante.type.startsWith("image/")) { setComprovantePreview(null); return; }
+    const url = URL.createObjectURL(comprovante);
+    setComprovantePreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [comprovante]);
+
+  // Se o cliente muda a forma de pagamento para fora do Pix, limpa comprovante
+  useEffect(() => {
+    if (pagamento !== "pix_agora" && comprovante) setComprovante(null);
+  }, [pagamento, comprovante]);
 
   // Ajusta a opção de pagamento default conforme a modalidade
   const pagamentosDisponiveis = useMemo<Pagamento[]>(
@@ -88,7 +103,13 @@ export function CartDrawer({ open, onClose }: Props) {
     if (pagamento === "pix_agora") {
       linhas.push(`• Chave Pix (${PIX_KEY_TYPE}): ${PIX_KEY}`);
       linhas.push(`• Beneficiário: ${PIX_BENEFICIARIO}`);
-      linhas.push(`• Envie o comprovante nesta conversa após o pagamento 🙏`);
+      if (comprovante) {
+        const kb = Math.max(1, Math.round(comprovante.size / 1024));
+        linhas.push(`• *Comprovante Pix anexado ✅* (${comprovante.name} — ${kb} KB)`);
+        linhas.push(`• _O comprovante segue anexado nesta conversa para confirmação do pagamento._`);
+      } else {
+        linhas.push(`• Envie o comprovante nesta conversa após o pagamento 🙏`);
+      }
     }
     if (obs.trim()) {
       linhas.push("");
@@ -101,7 +122,7 @@ export function CartDrawer({ open, onClose }: Props) {
     return linhas.join("\n");
   };
 
-  const handleEnviar = () => {
+  const handleEnviar = async () => {
     setErro("");
     if (!items.length) { setErro("Seu carrinho está vazio."); return; }
     if (!nome.trim()) { setErro("Informe seu nome."); return; }
@@ -113,7 +134,38 @@ export function CartDrawer({ open, onClose }: Props) {
       setErro("Informe o endereço de entrega.");
       return;
     }
+    if (pagamento === "pix_agora" && !comprovante) {
+      setErro("Anexe o comprovante do Pix para comprovar o pagamento.");
+      return;
+    }
+
     const msg = buildMessage();
+
+    // Se tiver comprovante Pix, tenta compartilhar o arquivo + texto (mobile: WhatsApp aparece nas opções).
+    if (comprovante && typeof navigator !== "undefined" && (navigator as any).canShare) {
+      const files = [comprovante];
+      const shareData: ShareData = { files, text: msg, title: "Pedido Doce Sonho" };
+      if ((navigator as any).canShare({ files })) {
+        try {
+          await (navigator as any).share(shareData);
+          return;
+        } catch {
+          // usuário cancelou ou navegador recusou — cai no fallback abaixo
+        }
+      }
+    }
+
+    // Fallback: abre o WhatsApp com o texto e faz o download do comprovante
+    // para o cliente anexá-lo manualmente na conversa.
+    if (comprovante) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(comprovante);
+      a.download = comprovante.name || "comprovante-pix";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    }
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
   };
@@ -287,8 +339,67 @@ export function CartDrawer({ open, onClose }: Props) {
                       </button>
                     </div>
                     <p className="text-[11px] text-muted-foreground">
-                      Beneficiário: <strong>{PIX_BENEFICIARIO}</strong>. Envie o comprovante pelo WhatsApp após finalizar o pedido.
+                      Beneficiário: <strong>{PIX_BENEFICIARIO}</strong>. Após pagar, anexe o comprovante abaixo para enviar junto com o pedido.
                     </p>
+
+                    <div className="pt-2 border-t border-wine/20">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-wine mb-1.5">
+                        Comprovante do Pix <span className="text-destructive">*</span>
+                      </label>
+                      {!comprovante ? (
+                        <label className="flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-wine/40 bg-card px-4 py-4 cursor-pointer hover:border-wine hover:bg-wine/5 transition">
+                          <span className="text-2xl">📎</span>
+                          <span className="text-sm font-medium text-wine">Anexar comprovante</span>
+                          <span className="text-[11px] text-muted-foreground">Imagem ou PDF do Pix pago</span>
+                          <input
+                            type="file"
+                            accept="image/*,application/pdf"
+                            className="hidden"
+                            onChange={(e) => {
+                              const f = e.target.files?.[0] ?? null;
+                              if (f && f.size > 10 * 1024 * 1024) {
+                                setErro("Comprovante muito grande (máx. 10 MB).");
+                                return;
+                              }
+                              setErro("");
+                              setComprovante(f);
+                            }}
+                          />
+                        </label>
+                      ) : (
+                        <div className="rounded-xl border border-wine/30 bg-card p-2.5 flex items-center gap-3">
+                          {comprovantePreview ? (
+                            <img
+                              src={comprovantePreview}
+                              alt="Prévia do comprovante"
+                              className="h-14 w-14 rounded-lg object-cover border border-border"
+                            />
+                          ) : (
+                            <div className="h-14 w-14 rounded-lg bg-cream-deep grid place-items-center text-2xl">
+                              📄
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-wine truncate">
+                              {comprovante.name}
+                            </p>
+                            <p className="text-[11px] text-muted-foreground">
+                              {Math.max(1, Math.round(comprovante.size / 1024))} KB · anexado ✅
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setComprovante(null)}
+                            className="text-xs text-muted-foreground hover:text-destructive"
+                          >
+                            Remover
+                          </button>
+                        </div>
+                      )}
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
+                        Ao enviar, o comprovante é anexado junto com o pedido no WhatsApp.
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
