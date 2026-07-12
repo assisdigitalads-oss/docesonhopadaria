@@ -103,7 +103,13 @@ export function CartDrawer({ open, onClose }: Props) {
     if (pagamento === "pix_agora") {
       linhas.push(`• Chave Pix (${PIX_KEY_TYPE}): ${PIX_KEY}`);
       linhas.push(`• Beneficiário: ${PIX_BENEFICIARIO}`);
-      linhas.push(`• Envie o comprovante nesta conversa após o pagamento 🙏`);
+      if (comprovante) {
+        const kb = Math.max(1, Math.round(comprovante.size / 1024));
+        linhas.push(`• *Comprovante Pix anexado ✅* (${comprovante.name} — ${kb} KB)`);
+        linhas.push(`• _O comprovante segue anexado nesta conversa para confirmação do pagamento._`);
+      } else {
+        linhas.push(`• Envie o comprovante nesta conversa após o pagamento 🙏`);
+      }
     }
     if (obs.trim()) {
       linhas.push("");
