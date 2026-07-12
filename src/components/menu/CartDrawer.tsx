@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCart, calcItemTotal } from "@/lib/cart-context";
 import {
   formatBRL,
   formatQty,
   WHATSAPP_NUMBER,
   ENDERECO_LOJA,
+  PIX_KEY,
+  PIX_KEY_TYPE,
+  PIX_BENEFICIARIO,
 } from "@/data/menu";
 
 interface Props {
@@ -13,15 +16,44 @@ interface Props {
 }
 
 type Modo = "retirada" | "entrega";
+type Pagamento = "pix_agora" | "pagar_retirada" | "pagar_entrega";
 
 export function CartDrawer({ open, onClose }: Props) {
   const { items, updateQty, removeItem, subtotal, clear } = useCart();
   const [modo, setModo] = useState<Modo>("retirada");
+  const [pagamento, setPagamento] = useState<Pagamento>("pagar_retirada");
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [endereco, setEndereco] = useState("");
   const [obs, setObs] = useState("");
   const [erro, setErro] = useState("");
+  const [pixCopiado, setPixCopiado] = useState(false);
+
+  // Ajusta a opção de pagamento default conforme a modalidade
+  const pagamentosDisponiveis = useMemo<Pagamento[]>(
+    () => (modo === "retirada" ? ["pix_agora", "pagar_retirada"] : ["pix_agora", "pagar_entrega"]),
+    [modo],
+  );
+  useEffect(() => {
+    if (!pagamentosDisponiveis.includes(pagamento)) {
+      setPagamento(modo === "retirada" ? "pagar_retirada" : "pagar_entrega");
+    }
+  }, [modo, pagamento, pagamentosDisponiveis]);
+
+  const pagamentoLabel = (p: Pagamento) =>
+    p === "pix_agora"
+      ? "💠 Pagar agora via Pix"
+      : p === "pagar_retirada"
+        ? "🏬 Pagar na retirada"
+        : "🛵 Pagar na entrega";
+
+  const copiarPix = async () => {
+    try {
+      await navigator.clipboard.writeText(PIX_KEY);
+      setPixCopiado(true);
+      setTimeout(() => setPixCopiado(false), 2000);
+    } catch {}
+  };
 
   const buildMessage = () => {
     const linhas: string[] = [];
@@ -50,6 +82,13 @@ export function CartDrawer({ open, onClose }: Props) {
     linhas.push(`*Total (itens por unidade): ${formatBRL(subtotal)}*`);
     if (items.some((i) => i.unit === "kg")) {
       linhas.push(`_Itens por kg: valor calculado no momento da retirada/entrega, conforme peso._`);
+    }
+    linhas.push("");
+    linhas.push(`*Forma de pagamento:* ${pagamentoLabel(pagamento)}`);
+    if (pagamento === "pix_agora") {
+      linhas.push(`• Chave Pix (${PIX_KEY_TYPE}): ${PIX_KEY}`);
+      linhas.push(`• Beneficiário: ${PIX_BENEFICIARIO}`);
+      linhas.push(`• Envie o comprovante nesta conversa após o pagamento 🙏`);
     }
     if (obs.trim()) {
       linhas.push("");
@@ -207,6 +246,51 @@ export function CartDrawer({ open, onClose }: Props) {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-wine mb-2">
+                  Forma de pagamento
+                </label>
+                <div className="grid grid-cols-1 gap-2">
+                  {pagamentosDisponiveis.map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setPagamento(p)}
+                      className={[
+                        "rounded-xl border px-3 py-2.5 text-sm font-medium transition text-left",
+                        pagamento === p
+                          ? "bg-wine text-cream border-wine"
+                          : "bg-card border-border text-wine hover:border-wine/50",
+                      ].join(" ")}
+                    >
+                      {pagamentoLabel(p)}
+                    </button>
+                  ))}
+                </div>
+                {pagamento === "pix_agora" && (
+                  <div className="mt-3 rounded-xl border border-wine/30 bg-cream-deep/40 p-3 space-y-2">
+                    <p className="text-xs text-wine font-semibold uppercase tracking-wider">
+                      Pague via Pix ({PIX_KEY_TYPE})
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <code className="flex-1 text-sm bg-card border border-border rounded px-2 py-1.5 text-foreground select-all break-all">
+                        {PIX_KEY}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={copiarPix}
+                        className="rounded-lg bg-wine text-cream text-xs font-semibold px-3 py-2 hover:brightness-110 transition"
+                      >
+                        {pixCopiado ? "Copiado!" : "Copiar"}
+                      </button>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Beneficiário: <strong>{PIX_BENEFICIARIO}</strong>. Envie o comprovante pelo WhatsApp após finalizar o pedido.
+                    </p>
+                  </div>
+                )}
               </div>
 
               <FormField label="Nome" value={nome} onChange={setNome} placeholder="Seu nome" />

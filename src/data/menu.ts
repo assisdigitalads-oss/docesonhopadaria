@@ -468,6 +468,9 @@ export const products: Product[] = [
 export const WHATSAPP_NUMBER = "5519982193443"; // 19 98219-3443
 export const INSTAGRAM = "docesonhopadaria_";
 export const ENDERECO_LOJA = "Av. Geraldo Gobo, 249 - Santa Cruz, Americana - SP 13477-410";
+export const PIX_KEY = "13.665.441/0001-54";
+export const PIX_KEY_TYPE = "CNPJ";
+export const PIX_BENEFICIARIO = "Doce Sonho Padaria";
 
 // Format helpers
 export const formatBRL = (n: number) =>
