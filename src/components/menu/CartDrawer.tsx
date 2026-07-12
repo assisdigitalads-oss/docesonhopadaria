@@ -339,8 +339,67 @@ export function CartDrawer({ open, onClose }: Props) {
                       </button>
                     </div>
                     <p className="text-[11px] text-muted-foreground">
-                      Beneficiário: <strong>{PIX_BENEFICIARIO}</strong>. Envie o comprovante pelo WhatsApp após finalizar o pedido.
+                      Beneficiário: <strong>{PIX_BENEFICIARIO}</strong>. Após pagar, anexe o comprovante abaixo para enviar junto com o pedido.
                     </p>
+
+                    <div className="pt-2 border-t border-wine/20">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-wine mb-1.5">
+                        Comprovante do Pix <span className="text-destructive">*</span>
+                      </label>
+                      {!comprovante ? (
+                        <label className="flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-wine/40 bg-card px-4 py-4 cursor-pointer hover:border-wine hover:bg-wine/5 transition">
+                          <span className="text-2xl">📎</span>
+                          <span className="text-sm font-medium text-wine">Anexar comprovante</span>
+                          <span className="text-[11px] text-muted-foreground">Imagem ou PDF do Pix pago</span>
+                          <input
+                            type="file"
+                            accept="image/*,application/pdf"
+                            className="hidden"
+                            onChange={(e) => {
+                              const f = e.target.files?.[0] ?? null;
+                              if (f && f.size > 10 * 1024 * 1024) {
+                                setErro("Comprovante muito grande (máx. 10 MB).");
+                                return;
+                              }
+                              setErro("");
+                              setComprovante(f);
+                            }}
+                          />
+                        </label>
+                      ) : (
+                        <div className="rounded-xl border border-wine/30 bg-card p-2.5 flex items-center gap-3">
+                          {comprovantePreview ? (
+                            <img
+                              src={comprovantePreview}
+                              alt="Prévia do comprovante"
+                              className="h-14 w-14 rounded-lg object-cover border border-border"
+                            />
+                          ) : (
+                            <div className="h-14 w-14 rounded-lg bg-cream-deep grid place-items-center text-2xl">
+                              📄
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-wine truncate">
+                              {comprovante.name}
+                            </p>
+                            <p className="text-[11px] text-muted-foreground">
+                              {Math.max(1, Math.round(comprovante.size / 1024))} KB · anexado ✅
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setComprovante(null)}
+                            className="text-xs text-muted-foreground hover:text-destructive"
+                          >
+                            Remover
+                          </button>
+                        </div>
+                      )}
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
+                        Ao enviar, o comprovante é anexado junto com o pedido no WhatsApp.
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
