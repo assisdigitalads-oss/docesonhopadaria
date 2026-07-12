@@ -293,6 +293,7 @@ export function CartDrawer({ open, onClose }: Props) {
                 )}
               </div>
 
+              <FormField label="Nome" value={nome} onChange={setNome} placeholder="Seu nome" />
               <FormField
                 label="Telefone / WhatsApp"
                 value={telefone}
