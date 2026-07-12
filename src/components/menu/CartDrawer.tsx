@@ -34,10 +34,11 @@ export function CartDrawer({ open, onClose }: Props) {
     () => (modo === "retirada" ? ["pix_agora", "pagar_retirada"] : ["pix_agora", "pagar_entrega"]),
     [modo],
   );
-  if (!pagamentosDisponiveis.includes(pagamento)) {
-    // sincroniza sem loop: escolhe uma opção válida
-    setTimeout(() => setPagamento(modo === "retirada" ? "pagar_retirada" : "pagar_entrega"), 0);
-  }
+  useEffect(() => {
+    if (!pagamentosDisponiveis.includes(pagamento)) {
+      setPagamento(modo === "retirada" ? "pagar_retirada" : "pagar_entrega");
+    }
+  }, [modo, pagamento, pagamentosDisponiveis]);
 
   const pagamentoLabel = (p: Pagamento) =>
     p === "pix_agora"
