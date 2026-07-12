@@ -21,11 +21,38 @@ type Pagamento = "pix_agora" | "pagar_retirada" | "pagar_entrega";
 export function CartDrawer({ open, onClose }: Props) {
   const { items, updateQty, removeItem, subtotal, clear } = useCart();
   const [modo, setModo] = useState<Modo>("retirada");
+  const [pagamento, setPagamento] = useState<Pagamento>("pagar_retirada");
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [endereco, setEndereco] = useState("");
   const [obs, setObs] = useState("");
   const [erro, setErro] = useState("");
+  const [pixCopiado, setPixCopiado] = useState(false);
+
+  // Ajusta a opção de pagamento default conforme a modalidade
+  const pagamentosDisponiveis = useMemo<Pagamento[]>(
+    () => (modo === "retirada" ? ["pix_agora", "pagar_retirada"] : ["pix_agora", "pagar_entrega"]),
+    [modo],
+  );
+  if (!pagamentosDisponiveis.includes(pagamento)) {
+    // sincroniza sem loop: escolhe uma opção válida
+    setTimeout(() => setPagamento(modo === "retirada" ? "pagar_retirada" : "pagar_entrega"), 0);
+  }
+
+  const pagamentoLabel = (p: Pagamento) =>
+    p === "pix_agora"
+      ? "💠 Pagar agora via Pix"
+      : p === "pagar_retirada"
+        ? "🏬 Pagar na retirada"
+        : "🛵 Pagar na entrega";
+
+  const copiarPix = async () => {
+    try {
+      await navigator.clipboard.writeText(PIX_KEY);
+      setPixCopiado(true);
+      setTimeout(() => setPixCopiado(false), 2000);
+    } catch {}
+  };
 
   const buildMessage = () => {
     const linhas: string[] = [];
