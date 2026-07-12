@@ -28,6 +28,21 @@ export function CartDrawer({ open, onClose }: Props) {
   const [obs, setObs] = useState("");
   const [erro, setErro] = useState("");
   const [pixCopiado, setPixCopiado] = useState(false);
+  const [comprovante, setComprovante] = useState<File | null>(null);
+  const [comprovantePreview, setComprovantePreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!comprovante) { setComprovantePreview(null); return; }
+    if (!comprovante.type.startsWith("image/")) { setComprovantePreview(null); return; }
+    const url = URL.createObjectURL(comprovante);
+    setComprovantePreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [comprovante]);
+
+  // Se o cliente muda a forma de pagamento para fora do Pix, limpa comprovante
+  useEffect(() => {
+    if (pagamento !== "pix_agora" && comprovante) setComprovante(null);
+  }, [pagamento, comprovante]);
 
   // Ajusta a opção de pagamento default conforme a modalidade
   const pagamentosDisponiveis = useMemo<Pagamento[]>(
