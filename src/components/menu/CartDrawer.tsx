@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useCart, calcItemTotal } from "@/lib/cart-context";
 import {
   formatBRL,
   formatQty,
   WHATSAPP_NUMBER,
   ENDERECO_LOJA,
+  PIX_KEY,
+  PIX_KEY_TYPE,
+  PIX_BENEFICIARIO,
 } from "@/data/menu";
 
 interface Props {
@@ -13,6 +16,7 @@ interface Props {
 }
 
 type Modo = "retirada" | "entrega";
+type Pagamento = "pix_agora" | "pagar_retirada" | "pagar_entrega";
 
 export function CartDrawer({ open, onClose }: Props) {
   const { items, updateQty, removeItem, subtotal, clear } = useCart();
