@@ -79,6 +79,8 @@ export const categories: Category[] = [
 // Helpers
 const cento = (n: number): Pick<Product, "price" | "unit" | "minQty" | "step"> => ({ price: n, unit: "cento", minQty: 25, step: 1 });
 const kg = (n: number): Pick<Product, "price" | "unit" | "minQty" | "step"> => ({ price: n, unit: "kg", minQty: 0.5, step: 0.5 });
+// Bolos confeitados / tortas: mínimo 1 kg com incrementos de 100 g (1,0 / 1,1 / 1,2 ...)
+const kgWhole = (n: number): Pick<Product, "price" | "unit" | "minQty" | "step"> => ({ price: n, unit: "kg", minQty: 1, step: 0.1 });
 const un = (n: number): Pick<Product, "price" | "unit" | "minQty" | "step"> => ({ price: n, unit: "un", minQty: 1, step: 1 });
 
 const sabor = (opts: OptionItem[], label = "Escolha o sabor"): OptionGroup => ({ label, min: 1, max: 1, options: opts });
