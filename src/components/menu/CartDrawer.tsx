@@ -82,9 +82,9 @@ export function CartDrawer({ open, onClose }: Props) {
     linhas.push("*Itens do pedido:*");
     items.forEach((it, idx) => {
       if (it.unit === "kg") {
-        linhas.push(`\n${idx + 1}. *${it.name}*`);
+        linhas.push(`\n${idx + 1}. *${formatQty(it.qty, it.unit)} — ${it.name}*`);
         linhas.push(`   • Preço: ${formatBRL(it.price)}/kg`);
-        linhas.push(`   • Peso a definir na retirada/entrega`);
+        linhas.push(`   • Peso aproximado escolhido: ${formatQty(it.qty, it.unit)} — valor final conforme peso real na retirada/entrega`);
       } else {
         linhas.push(`\n${idx + 1}. *${formatQty(it.qty, it.unit)} — ${it.name}*`);
       }
@@ -96,7 +96,7 @@ export function CartDrawer({ open, onClose }: Props) {
     linhas.push("");
     linhas.push(`*Total (itens por unidade): ${formatBRL(subtotal)}*`);
     if (items.some((i) => i.unit === "kg")) {
-      linhas.push(`_Itens por kg: valor calculado no momento da retirada/entrega, conforme peso._`);
+      linhas.push(`_Itens por kg: valor calculado no momento da retirada/entrega, conforme peso real._`);
     }
     linhas.push("");
     linhas.push(`*Forma de pagamento:* ${pagamentoLabel(pagamento)}`);
