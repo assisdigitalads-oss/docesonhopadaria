@@ -237,13 +237,36 @@ export function CartDrawer({ open, onClose }: Props) {
                 </div>
 
                 {it.unit === "kg" ? (
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">
-                      Peso a definir na retirada/entrega
-                    </span>
-                    <span className="font-display text-lg text-wine">
-                      {formatBRL(it.price)}/kg
-                    </span>
+                  <div className="mt-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
+                          onClick={() =>
+                            updateQty(it.id, Math.max(it.minQty, +(it.qty - it.step).toFixed(2)))
+                          }
+                          aria-label="Diminuir peso"
+                        >
+                          −
+                        </button>
+                        <span className="min-w-16 text-center font-semibold text-wine">
+                          {formatQty(it.qty, it.unit)}
+                        </span>
+                        <button
+                          className="h-8 w-8 rounded-full bg-cream-deep text-wine font-bold hover:bg-wine hover:text-cream"
+                          onClick={() => updateQty(it.id, +(it.qty + it.step).toFixed(2))}
+                          aria-label="Aumentar peso"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <span className="font-display text-lg text-wine">
+                        {formatBRL(it.price)}/kg
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Peso aproximado — valor final conforme peso real na retirada/entrega.
+                    </p>
                   </div>
                 ) : (
                   <div className="mt-3 flex items-center justify-between">
