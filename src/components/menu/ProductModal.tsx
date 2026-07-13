@@ -286,7 +286,7 @@ export function ProductModal({ product, onClose }: Props) {
           >
             <span>Adicionar ao pedido</span>
             <span className="font-display text-lg">
-              {isKg ? `${formatBRL(product.price)}/kg` : formatBRL(total)}
+              {isKg ? `${formatBRL(total)} (est.)` : formatBRL(total)}
             </span>
           </button>
         </div>
