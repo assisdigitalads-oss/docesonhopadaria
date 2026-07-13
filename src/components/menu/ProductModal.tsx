@@ -29,7 +29,7 @@ export function ProductModal({ product, onClose }: Props) {
     : 0;
 
   const total = useMemo(
-    () => (product ? (product.unit === "kg" ? 0 : unitPrice * qty) : 0),
+    () => (product ? unitPrice * qty : 0),
     [product, unitPrice, qty],
   );
 
@@ -286,7 +286,7 @@ export function ProductModal({ product, onClose }: Props) {
           >
             <span>Adicionar ao pedido</span>
             <span className="font-display text-lg">
-              {isKg ? `${formatBRL(product.price)}/kg` : formatBRL(total)}
+              {isKg ? `${formatBRL(total)} (est.)` : formatBRL(total)}
             </span>
           </button>
         </div>

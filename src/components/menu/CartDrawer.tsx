@@ -81,22 +81,21 @@ export function CartDrawer({ open, onClose }: Props) {
     linhas.push("");
     linhas.push("*Itens do pedido:*");
     items.forEach((it, idx) => {
+      linhas.push(`\n${idx + 1}. *${formatQty(it.qty, it.unit)} — ${it.name}*`);
       if (it.unit === "kg") {
-        linhas.push(`\n${idx + 1}. *${formatQty(it.qty, it.unit)} — ${it.name}*`);
         linhas.push(`   • Preço: ${formatBRL(it.price)}/kg`);
-        linhas.push(`   • Peso aproximado escolhido: ${formatQty(it.qty, it.unit)} — valor final conforme peso real na retirada/entrega`);
-      } else {
-        linhas.push(`\n${idx + 1}. *${formatQty(it.qty, it.unit)} — ${it.name}*`);
       }
       Object.entries(it.selections).forEach(([k, v]) => {
         if (v.length) linhas.push(`   • ${k}: ${v.join(", ")}`);
       });
-      if (it.unit !== "kg") linhas.push(`   Subtotal: ${formatBRL(calcItemTotal(it))}`);
+      linhas.push(
+        `   Subtotal${it.unit === "kg" ? " (estimado)" : ""}: ${formatBRL(calcItemTotal(it))}`,
+      );
     });
     linhas.push("");
-    linhas.push(`*Total (itens por unidade): ${formatBRL(subtotal)}*`);
+    linhas.push(`*Total do pedido: ${formatBRL(subtotal)}*`);
     if (items.some((i) => i.unit === "kg")) {
-      linhas.push(`_Itens por kg: valor calculado no momento da retirada/entrega, conforme peso real._`);
+      linhas.push(`_Itens por kg têm valor estimado — o valor final é ajustado conforme o peso real na retirada/entrega._`);
     }
     linhas.push("");
     linhas.push(`*Forma de pagamento:* ${pagamentoLabel(pagamento)}`);
@@ -260,12 +259,17 @@ export function CartDrawer({ open, onClose }: Props) {
                           +
                         </button>
                       </div>
-                      <span className="font-display text-lg text-wine">
-                        {formatBRL(it.price)}/kg
-                      </span>
+                      <div className="text-right">
+                        <div className="font-display text-lg text-wine">
+                          {formatBRL(calcItemTotal(it))}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">
+                          {formatBRL(it.price)}/kg
+                        </div>
+                      </div>
                     </div>
                     <p className="text-[11px] text-muted-foreground">
-                      Peso aproximado — valor final conforme peso real na retirada/entrega.
+                      Valor estimado pelo peso escolhido — o valor final é ajustado conforme o peso real na retirada/entrega.
                     </p>
                   </div>
                 ) : (
