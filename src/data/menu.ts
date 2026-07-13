@@ -79,6 +79,8 @@ export const categories: Category[] = [
 // Helpers
 const cento = (n: number): Pick<Product, "price" | "unit" | "minQty" | "step"> => ({ price: n, unit: "cento", minQty: 25, step: 1 });
 const kg = (n: number): Pick<Product, "price" | "unit" | "minQty" | "step"> => ({ price: n, unit: "kg", minQty: 0.5, step: 0.5 });
+// Bolos confeitados / tortas: mínimo 1 kg com incrementos de 100 g (1,0 / 1,1 / 1,2 ...)
+const kgWhole = (n: number): Pick<Product, "price" | "unit" | "minQty" | "step"> => ({ price: n, unit: "kg", minQty: 1, step: 0.1 });
 const un = (n: number): Pick<Product, "price" | "unit" | "minQty" | "step"> => ({ price: n, unit: "un", minQty: 1, step: 1 });
 
 const sabor = (opts: OptionItem[], label = "Escolha o sabor"): OptionGroup => ({ label, min: 1, max: 1, options: opts });
@@ -311,7 +313,7 @@ export const products: Product[] = [
 
   // ============ BOLOS CONFEITADOS ============
   {
-    id: "bolo-confeitado", name: "Bolo Confeitado Tradicional", category: "bolos-confeitados", ...kg(99.9),
+    id: "bolo-confeitado", name: "Bolo Confeitado Tradicional", category: "bolos-confeitados", ...kgWhole(99.9),
     description: "Escolha até 2 recheios, a massa e a cobertura.",
     optionGroups: [
       { label: "Recheio (até 2 sabores)", min: 1, max: 2, options: [
@@ -331,30 +333,30 @@ export const products: Product[] = [
       { label: "Cobertura", min: 1, max: 1, options: [{ name: "Chantilly" }, { name: "Marshmallow" }, { name: "Naked (bolo pelado)" }] },
     ],
   },
-  { id: "bolo-mil-folhas-morango", name: "Bolo Mil Folhas Creme com Morango", category: "bolos-confeitados", ...kg(99.9) },
-  { id: "bolo-mil-folhas-trufado", name: "Bolo Mil Folhas Trufado de Chocolate", category: "bolos-confeitados", ...kg(99.9) },
-  { id: "bolo-kitkat", name: "Bolo KitKat", category: "bolos-confeitados", ...kg(99.9) },
+  { id: "bolo-mil-folhas-morango", name: "Bolo Mil Folhas Creme com Morango", category: "bolos-confeitados", ...kgWhole(99.9) },
+  { id: "bolo-mil-folhas-trufado", name: "Bolo Mil Folhas Trufado de Chocolate", category: "bolos-confeitados", ...kgWhole(99.9) },
+  { id: "bolo-kitkat", name: "Bolo KitKat", category: "bolos-confeitados", ...kgWhole(99.9) },
 
   // ============ TORTAS ============
   {
-    id: "torta-leite-ninho", name: "Torta Leite Ninho", category: "tortas", ...kg(99.9),
+    id: "torta-leite-ninho", name: "Torta Leite Ninho", category: "tortas", ...kgWhole(99.9),
     optionGroups: [sabor([
       { name: "Tradicional" }, { name: "Frutas Vermelhas" }, { name: "Nutella" }, { name: "Abacaxi" },
     ])],
   },
-  { id: "torta-holandesa", name: "Torta Holandesa", category: "tortas", ...kg(99.9) },
-  { id: "torta-ferrero", name: "Torta Ferrero Rocher", category: "tortas", ...kg(99.9) },
-  { id: "torta-trufado-chocolate", name: "Torta Trufado de Chocolate", category: "tortas", ...kg(99.9) },
-  { id: "torta-trufado-ninho", name: "Torta Trufado com Ninho", category: "tortas", ...kg(99.9) },
-  { id: "torta-morangoffe", name: "Torta Morangoffe", category: "tortas", ...kg(99.9), description: "Morango, creme marfim e brigadeiro branco." },
-  { id: "torta-banoffee", name: "Torta Banoffee", category: "tortas", ...kg(99.9), description: "Banana, creme marfim e doce de leite." },
-  { id: "torta-strogonoff-nozes", name: "Torta Strogonoff de Nozes", category: "tortas", ...kg(99.9) },
-  { id: "torta-mousse-cafe", name: "Torta Mousse de Café", category: "tortas", ...kg(99.9) },
-  { id: "torta-mousse-nutella", name: "Torta Mousse de Nutella", category: "tortas", ...kg(99.9) },
-  { id: "torta-sonho-valsa", name: "Torta Sonho de Valsa", category: "tortas", ...kg(99.9) },
-  { id: "torta-ouro-branco", name: "Torta Ouro Branco", category: "tortas", ...kg(99.9) },
-  { id: "torta-bis", name: "Torta Bis", category: "tortas", ...kg(99.9) },
-  { id: "torta-prestigio", name: "Torta Prestígio com Trufado", category: "tortas", ...kg(99.9) },
+  { id: "torta-holandesa", name: "Torta Holandesa", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-ferrero", name: "Torta Ferrero Rocher", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-trufado-chocolate", name: "Torta Trufado de Chocolate", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-trufado-ninho", name: "Torta Trufado com Ninho", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-morangoffe", name: "Torta Morangoffe", category: "tortas", ...kgWhole(99.9), description: "Morango, creme marfim e brigadeiro branco." },
+  { id: "torta-banoffee", name: "Torta Banoffee", category: "tortas", ...kgWhole(99.9), description: "Banana, creme marfim e doce de leite." },
+  { id: "torta-strogonoff-nozes", name: "Torta Strogonoff de Nozes", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-mousse-cafe", name: "Torta Mousse de Café", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-mousse-nutella", name: "Torta Mousse de Nutella", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-sonho-valsa", name: "Torta Sonho de Valsa", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-ouro-branco", name: "Torta Ouro Branco", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-bis", name: "Torta Bis", category: "tortas", ...kgWhole(99.9) },
+  { id: "torta-prestigio", name: "Torta Prestígio com Trufado", category: "tortas", ...kgWhole(99.9) },
 
   // ============ DOCES ============
   { id: "amor-perfeito", name: "Amor Perfeito", category: "doces", ...cento(390) },

@@ -164,12 +164,60 @@ export function ProductModal({ product, onClose }: Props) {
 
           {/* Quantity — hidden for kg items (peso definido na retirada) */}
           {isKg ? (
-            <div className="rounded-xl border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-wine">
-              <p className="font-semibold">Preço por kg: {formatBRL(product.price)}</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                O peso final é definido na retirada ou entrega. O valor exato será
-                informado neste momento.
-              </p>
+            <div className="space-y-3">
+              <div className="rounded-xl border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-wine">
+                <p className="font-semibold">Preço por kg: {formatBRL(product.price)}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Mínimo {product.minQty.toLocaleString("pt-BR")} kg — você pode ajustar de 100 em 100 g
+                  (1,0 kg · 1,1 kg · 1,2 kg · 1,3 kg …). O peso final e o valor exato
+                  são confirmados na retirada ou entrega.
+                </p>
+              </div>
+              <div>
+                <div className="flex items-baseline justify-between mb-2">
+                  <h4 className="font-semibold text-sm text-wine">Peso desejado</h4>
+                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                    Mínimo {product.minQty.toLocaleString("pt-BR")} kg
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setQty((q) => Math.max(product.minQty, +(q - product.step).toFixed(2)))}
+                    className="h-11 w-11 rounded-full bg-cream border border-border text-wine text-xl font-bold hover:bg-wine hover:text-cream transition"
+                    aria-label="Diminuir"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    value={Number.isFinite(qty) ? qty : ""}
+                    min={product.minQty}
+                    step={product.step}
+                    inputMode="decimal"
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(",", ".");
+                      if (raw === "") { setQty(NaN as unknown as number); return; }
+                      const v = parseFloat(raw);
+                      setQty(Number.isFinite(v) ? v : (NaN as unknown as number));
+                    }}
+                    onBlur={() => {
+                      if (!Number.isFinite(qty) || qty < product.minQty) setQty(product.minQty);
+                      else setQty(+qty.toFixed(2));
+                    }}
+                    className="w-24 text-center h-11 rounded-lg border bg-background font-semibold text-wine"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setQty((q) => +(q + product.step).toFixed(2))}
+                    className="h-11 w-11 rounded-full bg-cream border border-border text-wine text-xl font-bold hover:bg-wine hover:text-cream transition"
+                    aria-label="Aumentar"
+                  >
+                    +
+                  </button>
+                  <span className="text-sm text-muted-foreground">kg</span>
+                </div>
+              </div>
             </div>
           ) : (
           <div>
