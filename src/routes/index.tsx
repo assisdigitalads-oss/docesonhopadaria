@@ -149,7 +149,7 @@ function Header({ onOpenCart }: { onOpenCart: () => void }) {
     <header className="sticky top-0 z-30 border-b border-wine/10 bg-cream/95 backdrop-blur-md">
       <div className="mx-auto max-w-5xl px-4 h-16 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <img src={logoAsset.url} alt="Doce Sonho" className="h-11 w-auto" />
+          <img src={LOGO_URL} alt="Doce Sonho" className="h-11 w-auto" />
           <div className="hidden sm:block min-w-0">
             <p className="font-display text-lg leading-none text-wine truncate">Doce Sonho</p>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -355,7 +355,7 @@ function Footer() {
     <footer className="mt-16 border-t border-wine/10 pt-8 text-sm text-muted-foreground">
       <div className="grid gap-6 sm:grid-cols-3">
         <div>
-          <img src={logoAsset.url} alt="Doce Sonho" className="h-14 w-auto mb-2" />
+          <img src={LOGO_URL} alt="Doce Sonho" className="h-14 w-auto mb-2" />
           <p className="text-xs">Padaria e Confeitaria</p>
         </div>
         <div>
