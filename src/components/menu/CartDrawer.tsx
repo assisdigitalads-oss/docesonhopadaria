@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useCart, calcItemTotal } from "@/lib/cart-context";
+import { useAdmin } from "@/lib/admin-store";
 import {
   formatBRL,
   formatQty,
-  WHATSAPP_NUMBER,
   ENDERECO_LOJA,
-  PIX_KEY,
-  PIX_KEY_TYPE,
-  PIX_BENEFICIARIO,
 } from "@/data/menu";
+
 
 interface Props {
   open: boolean;
