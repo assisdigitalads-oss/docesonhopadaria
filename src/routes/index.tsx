@@ -356,6 +356,11 @@ function FloatingCartButton({ onClick }: { onClick: () => void }) {
 }
 
 function Footer() {
+  const { settings } = useAdmin();
+  const waDigits = settings.whatsapp.replace(/\D/g, "");
+  const waDisplay = waDigits.length >= 12
+    ? `(${waDigits.slice(2, 4)}) ${waDigits.slice(4, 9)}-${waDigits.slice(9)}`
+    : settings.whatsapp;
   return (
     <footer className="mt-16 border-t border-wine/10 pt-8 text-sm text-muted-foreground">
       <div className="grid gap-6 sm:grid-cols-3">
@@ -370,12 +375,12 @@ function Footer() {
         <div>
           <h4 className="font-semibold text-wine mb-1">Fale com a gente</h4>
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            href={`https://wa.me/${waDigits}`}
             target="_blank"
             rel="noreferrer"
             className="block text-xs hover:text-wine"
           >
-            WhatsApp: (19) 98219-3443
+            WhatsApp: {waDisplay}
           </a>
           <a
             href={`https://instagram.com/${INSTAGRAM}`}
@@ -388,8 +393,12 @@ function Footer() {
         </div>
       </div>
       <p className="text-[11px] text-center mt-8 pb-4">
-        © {new Date().getFullYear()} Doce Sonho · Todos os preços conforme cardápio oficial.
+        © {new Date().getFullYear()} Doce Sonho ·{" "}
+        <Link to="/admin" className="hover:text-wine underline-offset-2 hover:underline">
+          Área administrativa
+        </Link>
       </p>
     </footer>
   );
 }
+
