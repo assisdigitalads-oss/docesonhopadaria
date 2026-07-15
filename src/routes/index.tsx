@@ -1,31 +1,34 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState, useEffect } from "react";
 const LOGO_URL = "/logo.png";
 import heroImg from "@/assets/hero-bakery.jpg";
 import {
   categories,
-  products,
   formatBRL,
   formatUnitLabel,
   INSTAGRAM,
-  WHATSAPP_NUMBER,
   ENDERECO_LOJA,
   type Product,
   type CategoryId,
 } from "@/data/menu";
 import { CartProvider, useCart } from "@/lib/cart-context";
+import { AdminStoreProvider, useAdmin } from "@/lib/admin-store";
 import { ProductModal } from "@/components/menu/ProductModal";
 import { CartDrawer } from "@/components/menu/CartDrawer";
 
 export const Route = createFileRoute("/")({
   component: () => (
-    <CartProvider>
-      <MenuPage />
-    </CartProvider>
+    <AdminStoreProvider>
+      <CartProvider>
+        <MenuPage />
+      </CartProvider>
+    </AdminStoreProvider>
   ),
 });
 
+
 function MenuPage() {
+  const { products, settings } = useAdmin();
   const [search, setSearch] = useState("");
   const [active, setActive] = useState<CategoryId>(categories[0].id);
   const [product, setProduct] = useState<Product | null>(null);
@@ -42,14 +45,16 @@ function MenuPage() {
         g.options.some((o) => o.name.toLowerCase().includes(term)),
       );
     });
-  }, [search]);
+  }, [search, products]);
 
   const grouped = useMemo(() => {
     const g: Record<CategoryId, Product[]> = {} as Record<CategoryId, Product[]>;
     for (const c of categories) g[c.id] = [];
-    for (const p of filtered) g[p.category].push(p);
+    for (const p of filtered) (g[p.category] ??= []).push(p);
     return g;
   }, [filtered]);
+
+
 
   const scrollTo = (id: CategoryId) => {
     setActive(id);
@@ -291,13 +296,14 @@ function ProductCard({
       className="group text-left bg-card rounded-2xl border border-border/60 p-3 flex gap-3 hover:border-wine/40 hover:shadow-soft transition"
     >
       <img
-        src={categoryImg}
+        src={product.image || categoryImg}
         alt=""
         className="h-24 w-24 sm:h-28 sm:w-28 rounded-xl object-cover shrink-0"
         loading="lazy"
         width={112}
         height={112}
       />
+
       <div className="min-w-0 flex-1 flex flex-col">
         <h3 className="font-semibold text-wine leading-snug">{product.name}</h3>
         {product.description && (
@@ -351,6 +357,11 @@ function FloatingCartButton({ onClick }: { onClick: () => void }) {
 }
 
 function Footer() {
+  const { settings } = useAdmin();
+  const waDigits = settings.whatsapp.replace(/\D/g, "");
+  const waDisplay = waDigits.length >= 12
+    ? `(${waDigits.slice(2, 4)}) ${waDigits.slice(4, 9)}-${waDigits.slice(9)}`
+    : settings.whatsapp;
   return (
     <footer className="mt-16 border-t border-wine/10 pt-8 text-sm text-muted-foreground">
       <div className="grid gap-6 sm:grid-cols-3">
@@ -365,12 +376,12 @@ function Footer() {
         <div>
           <h4 className="font-semibold text-wine mb-1">Fale com a gente</h4>
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            href={`https://wa.me/${waDigits}`}
             target="_blank"
             rel="noreferrer"
             className="block text-xs hover:text-wine"
           >
-            WhatsApp: (19) 98219-3443
+            WhatsApp: {waDisplay}
           </a>
           <a
             href={`https://instagram.com/${INSTAGRAM}`}
@@ -383,8 +394,12 @@ function Footer() {
         </div>
       </div>
       <p className="text-[11px] text-center mt-8 pb-4">
-        © {new Date().getFullYear()} Doce Sonho · Todos os preços conforme cardápio oficial.
+        © {new Date().getFullYear()} Doce Sonho ·{" "}
+        <Link to="/admin" className="hover:text-wine underline-offset-2 hover:underline">
+          Área administrativa
+        </Link>
       </p>
     </footer>
   );
 }
+
