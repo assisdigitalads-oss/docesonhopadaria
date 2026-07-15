@@ -28,6 +28,7 @@ export const Route = createFileRoute("/")({
 
 
 function MenuPage() {
+  const { products, settings } = useAdmin();
   const [search, setSearch] = useState("");
   const [active, setActive] = useState<CategoryId>(categories[0].id);
   const [product, setProduct] = useState<Product | null>(null);
@@ -44,14 +45,16 @@ function MenuPage() {
         g.options.some((o) => o.name.toLowerCase().includes(term)),
       );
     });
-  }, [search]);
+  }, [search, products]);
 
   const grouped = useMemo(() => {
     const g: Record<CategoryId, Product[]> = {} as Record<CategoryId, Product[]>;
     for (const c of categories) g[c.id] = [];
-    for (const p of filtered) g[p.category].push(p);
+    for (const p of filtered) (g[p.category] ??= []).push(p);
     return g;
   }, [filtered]);
+
+
 
   const scrollTo = (id: CategoryId) => {
     setActive(id);
