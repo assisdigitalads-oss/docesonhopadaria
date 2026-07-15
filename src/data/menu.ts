@@ -37,7 +37,9 @@ export interface Product {
   step: number;
   category: CategoryId;
   optionGroups?: OptionGroup[];
+  image?: string; // opcional — foto customizada do produto (admin)
 }
+
 
 export type CategoryId =
   | "folhados"
