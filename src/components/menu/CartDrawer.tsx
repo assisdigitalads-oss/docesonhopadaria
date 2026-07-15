@@ -18,6 +18,12 @@ type Pagamento = "pix_agora" | "pagar_retirada" | "pagar_entrega";
 
 export function CartDrawer({ open, onClose }: Props) {
   const { items, updateQty, removeItem, subtotal, clear } = useCart();
+  const { settings } = useAdmin();
+  const PIX_KEY = settings.pixKey;
+  const PIX_KEY_TYPE = settings.pixKeyType;
+  const PIX_BENEFICIARIO = settings.pixBeneficiario;
+  const WHATSAPP_NUMBER = settings.whatsapp.replace(/\D/g, "");
+
   const [modo, setModo] = useState<Modo>("retirada");
   const [pagamento, setPagamento] = useState<Pagamento>("pagar_retirada");
   const [nome, setNome] = useState("");
