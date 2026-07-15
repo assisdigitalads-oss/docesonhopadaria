@@ -296,13 +296,14 @@ function ProductCard({
       className="group text-left bg-card rounded-2xl border border-border/60 p-3 flex gap-3 hover:border-wine/40 hover:shadow-soft transition"
     >
       <img
-        src={categoryImg}
+        src={product.image || categoryImg}
         alt=""
         className="h-24 w-24 sm:h-28 sm:w-28 rounded-xl object-cover shrink-0"
         loading="lazy"
         width={112}
         height={112}
       />
+
       <div className="min-w-0 flex-1 flex flex-col">
         <h3 className="font-semibold text-wine leading-snug">{product.name}</h3>
         {product.description && (
