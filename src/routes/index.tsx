@@ -1,29 +1,31 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState, useEffect } from "react";
 const LOGO_URL = "/logo.png";
 import heroImg from "@/assets/hero-bakery.jpg";
 import {
   categories,
-  products,
   formatBRL,
   formatUnitLabel,
   INSTAGRAM,
-  WHATSAPP_NUMBER,
   ENDERECO_LOJA,
   type Product,
   type CategoryId,
 } from "@/data/menu";
 import { CartProvider, useCart } from "@/lib/cart-context";
+import { AdminStoreProvider, useAdmin } from "@/lib/admin-store";
 import { ProductModal } from "@/components/menu/ProductModal";
 import { CartDrawer } from "@/components/menu/CartDrawer";
 
 export const Route = createFileRoute("/")({
   component: () => (
-    <CartProvider>
-      <MenuPage />
-    </CartProvider>
+    <AdminStoreProvider>
+      <CartProvider>
+        <MenuPage />
+      </CartProvider>
+    </AdminStoreProvider>
   ),
 });
+
 
 function MenuPage() {
   const [search, setSearch] = useState("");
